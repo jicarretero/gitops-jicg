@@ -51,6 +51,7 @@ spec:
             - -experimental
             - -port
             - "1026"
+            - -mongocOnly
           ports:
             - containerPort: 1026
 ---
