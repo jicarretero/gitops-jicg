@@ -51,6 +51,16 @@ spec:
         io.kompose.network/krt-docker-network: "true"
         io.kompose.service: redpanda-0
     spec:
+      initContainers:
+        - name: fix-permissions
+          image: busybox
+          command:
+            - sh
+            - -c
+            - chown -R 101:101 /var/lib/redpanda/data
+          volumeMounts:
+            - mountPath: /var/lib/redpanda/data
+              name: redpanda-0
       containers:
         - args:
             - redpanda
