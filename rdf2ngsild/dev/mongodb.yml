@@ -51,9 +51,8 @@ spec:
     spec:
       containers:
         - name: mongodb
-          image: mongo:5.0
+          image: mongo:8
           imagePullPolicy: IfNotPresent
-          args: ["--nojournal"]
           volumeMounts:
             - name: mongodb-volume
               mountPath: /data/db
