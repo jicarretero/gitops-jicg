@@ -1,0 +1,63 @@
+---
+# Source: mongodb/templates/mongodb.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: mongodb-volume
+spec:
+  accessModes:
+    - "ReadWriteOnce"
+  resources:
+    requests:
+      storage: "1Gi"
+  storageClassName: crc-csi-hostpath-provisioner
+---
+# Source: mongodb/templates/mongodb.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+  labels:
+    name: mongodb
+spec:
+  type: ClusterIP
+  selector:
+    name: mongodb
+  ports:
+    - name: mongodb
+      port: 27017
+      protocol: TCP
+
+---
+# Source: mongodb/templates/mongodb.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb
+  labels:
+    name: mongodb
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      name: mongodb
+  strategy:
+    type: RollingUpdate 
+  template:
+    metadata:
+      name: mongodb
+      labels:
+        name: mongodb
+    spec:
+      containers:
+        - name: mongodb
+          image: mongo:5.0
+          imagePullPolicy: IfNotPresent
+          args: ["--nojournal"]
+          volumeMounts:
+            - name: mongodb-volume
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-volume
+          persistentVolumeClaim:
+            claimName: mongodb-volume

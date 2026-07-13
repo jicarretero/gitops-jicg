@@ -1,0 +1,73 @@
+---
+# Source: orion-ld/templates/orion-ld.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: orion-ld-service
+  labels:
+    name: orion-ld-rs
+spec:
+  type: ClusterIP
+  selector:
+    name: orion-ld-rs
+  ports:
+    - name: ngsild
+      port: 1026
+      targetPort: 1026
+      protocol: TCP
+
+
+---
+# Source: orion-ld/templates/orion-ld.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orion-ld
+  labels:
+    name: orion-ld-rs
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      name: orion-ld-rs
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      name: orion-ld
+      labels:
+        name: orion-ld-rs
+    spec:
+      restartPolicy: Always
+      containers:
+        - name: orion-ld
+          image: quay.io/fiware/orion-ld
+          imagePullPolicy: Always
+          args: 
+            - -dbhost
+            - mongodb
+            - -logLevel
+            - DEBUG
+            - -experimental
+            - -port
+            - "1026"
+          ports:
+            - containerPort: 1026
+---
+# Source: orion-ld/templates/orion-ld-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: orion-ld-service
+spec:
+  rules:
+  - host: orionld.devops-dev.jicg.mine
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: orion-ld-service
+            port: 
+              number: 1026
