@@ -11,7 +11,7 @@ spec:
     path: rdf2ngsild/dev
   destination: 
     server: https://kubernetes.default.svc
-    namespace: rdf2ngsild-namespace
+    namespace: rdf2ngsild
   syncPolicy:
     syncOptions:
     - CreateNamespace=true

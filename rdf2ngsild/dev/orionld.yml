@@ -41,7 +41,7 @@ spec:
       restartPolicy: Always
       containers:
         - name: orion-ld
-          image: quay.io/fiware/orion-ld
+          image: fiware/orion-ld
           imagePullPolicy: Always
           args: 
             - -dbhost
